@@ -169,9 +169,6 @@ class Button:
     def check_hover(self, mouse_pos):
         self.hovered = self.rect.collidepoint(mouse_pos)
         self.scale = 1.1 if self.hovered else 1.0
-        if self.hovered:
-            button_hover_sound.play()
-
     def check_click(self, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
             button_click_sound.play()
