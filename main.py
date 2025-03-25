@@ -3,6 +3,7 @@ import random
 import math
 import json
 import time
+import os
 
 # Initialize pygame
 pygame.init()
@@ -11,42 +12,61 @@ pygame.init()
 SCREEN_WIDTH = 560
 SCREEN_HEIGHT = 900
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Space Inverters")
+pygame.display.set_caption("Space Invaders")
+
+# Define the data directory
+DATA_DIR = "data"
+
+# Debugging: Print the current working directory and font path
+print("Current Working Directory:", os.getcwd())
+print("Constructed Font Path:", os.path.join(DATA_DIR, 'freesansbold.ttf'))
 
 # Load images
-game_over_img = pygame.image.load("game_over.png")
-background_img = pygame.image.load("background.jpg").convert()
-player_img = pygame.transform.scale(pygame.image.load("enemy.png"), (80, 80))
-bullet_img = pygame.image.load("bullet.png")
+game_over_img = pygame.image.load(os.path.join(DATA_DIR, "game_over.png"))
+background_img = pygame.image.load(os.path.join(DATA_DIR, "background.jpg")).convert()
+player_img = pygame.transform.scale(pygame.image.load(os.path.join(DATA_DIR, "enemy.png")), (80, 80))
+bullet_img = pygame.image.load(os.path.join(DATA_DIR, "bullet.png"))
 powerup_imgs = {
-    "speed": pygame.image.load("powerup.png"),
-    "health": pygame.image.load("powerup_health.png"),
-    "bullet": pygame.image.load("powerup_bullet.png"),
-    "double": pygame.image.load("powerup_double.png"),
-    "triple": pygame.image.load("powerup_triple.png"),
-    "ashoot": pygame.image.load("powerup_ashoot.png"),
-    "godmode": pygame.image.load("powerup_godmode.png"),
-    "supermode": pygame.image.load("powerup_supermode.png")
+    "speed": pygame.image.load(os.path.join(DATA_DIR, "powerup.png")),
+    "health": pygame.image.load(os.path.join(DATA_DIR, "powerup_health.png")),
+    "bullet": pygame.image.load(os.path.join(DATA_DIR, "powerup_bullet.png")),
+    "double": pygame.image.load(os.path.join(DATA_DIR, "powerup_double.png")),
+    "triple": pygame.image.load(os.path.join(DATA_DIR, "powerup_triple.png")),
+    "ashoot": pygame.image.load(os.path.join(DATA_DIR, "powerup_ashoot.png")),
+    "godmode": pygame.image.load(os.path.join(DATA_DIR, "powerup_godmode.png")),
+    "supermode": pygame.image.load(os.path.join(DATA_DIR, "powerup_supermode.png"))
 }
-meteor_img = pygame.transform.scale(pygame.image.load("meteor.png"), (40, 40))
-icon = pygame.image.load("UFO.png")
+meteor_img = pygame.transform.scale(pygame.image.load(os.path.join(DATA_DIR, "meteor.png")), (40, 40))
+icon = pygame.image.load(os.path.join(DATA_DIR, "UFO.png"))
 pygame.display.set_icon(icon)
 
 # Load sounds
-game_over_sound = pygame.mixer.Sound("game_over.mp3")
-bullet_sound = pygame.mixer.Sound("bullet_sounds.mp3")
-explosion_sound = pygame.mixer.Sound("explosion.mp3")
-button_hover_sound = pygame.mixer.Sound("button_hover.mp3")
-button_click_sound = pygame.mixer.Sound("button_click.mp3")
-powerup_sound = pygame.mixer.Sound("powerup.mp3")
-pygame.mixer.music.load("background_music.mp3")
+game_over_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "game_over.mp3"))
+bullet_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "bullet_sounds.mp3"))
+explosion_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "explosion.mp3"))
+button_hover_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "button_hover.mp3"))
+button_click_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "button_click.mp3"))
+powerup_sound = pygame.mixer.Sound(os.path.join(DATA_DIR, "powerup.mp3"))
+pygame.mixer.music.load(os.path.join(DATA_DIR, "background_music.mp3"))
 pygame.mixer.music.play(-1)
 
+# Font setup (fallback to system font if file not found)
 # Font setup
-font = pygame.font.Font('freesansbold.ttf', 24)
-small_font = pygame.font.Font('freesansbold.ttf', 18)
-title_font = pygame.font.Font('freesansbold.ttf', 48)
-button_font = pygame.font.Font('freesansbold.ttf', 32)
+try:
+    font = pygame.font.Font(os.path.join(DATA_DIR, 'PressStart2P.ttf'), 24)
+    small_font = pygame.font.Font(os.path.join(DATA_DIR, 'PressStart2P.ttf'), 18)
+    title_font = pygame.font.Font(os.path.join(DATA_DIR, 'PressStart2P.ttf'), 48)
+    button_font = pygame.font.Font(os.path.join(DATA_DIR, 'PressStart2P.ttf'), 32)
+except FileNotFoundError:
+    print("Custom font file not found. Using system font instead.")
+    font = pygame.font.SysFont('Arial', 24)  # Fallback to Arial
+    small_font = pygame.font.SysFont('Arial', 18)
+    title_font = pygame.font.SysFont('Arial', 48)
+    button_font = pygame.font.SysFont('Arial', 32)
+
+# Rest of the code remains the same...
+
+# Rest of the code remains the same...
 
 # Game states
 INTRO = "intro"
@@ -238,7 +258,7 @@ class Particle:
             pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
 
 def animated_title():
-    title_text = title_font.render("Space Inverters", True, (255, 255, 255))
+    title_text = title_font.render("Space Invaders", True, (255, 255, 255))
     x = SCREEN_WIDTH // 2 - title_text.get_width() // 2
     y = 200 + math.sin(time.time() * 3) * 20
     screen.blit(title_text, (x, y))
@@ -477,7 +497,7 @@ def mission_mode(mission_index):
     mission = missions[mission_index]
     player_x = SCREEN_WIDTH // 2 - 40
     player_y = SCREEN_HEIGHT - 120
-    player_speed = 0.3 * (1.5 if current_spaceship == 0 else 1)
+    player_speed = 1.5 * (1.5 if current_spaceship == 0 else 1)
     player_health = 3
     player_boost = {"speed": False, "bullet": False, "speed_time": 0, "bullet_time": 0, "shield": current_spaceship == 4, 
                     "shield_time": 0, "double": False, "double_time": 0, "triple": False, "triple_time": 0, 
@@ -488,7 +508,8 @@ def mission_mode(mission_index):
     player_rect = spaceships[current_spaceship].get_rect(topleft=(player_x, player_y))
 
     colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255)]
-    enemies = [Enemy(random.randint(0, SCREEN_WIDTH - 60), -50 - i * 300, 5, random.choice(colors)) for i in range(3)]
+    enemy_types = ["fast", "tank", "shooter"]
+    enemies = [Enemy(random.randint(0, SCREEN_WIDTH - 60), -50 - i * 300, random.randint(1, 100), random.choice(colors), random.choice(enemy_types)) for i in range(3)]
     bullets = []
     score = 0
     mission_progress = {"enemies": 0, "powerups": 0, "time": 0, "meteors": 0, "score": 0}
@@ -696,7 +717,7 @@ def mission_mode(mission_index):
 def settings_screen():
     global current_state, volume, vibration
     back_button = Button("Back", SCREEN_WIDTH // 2 - 100, 600, 200, 50, (150, 0, 0), (255, 0, 0))
-    vibration_button = Button("Vibration: " + ("On" if vibration else "Off"), SCREEN_WIDTH // 2 - 100, 400, 200, 50, (0, 150, 0), (0, 255, 0))
+    vibration_button = Button("Vibration: " + ("On" if vibration else "Off"), SCREEN_WIDTH // 2 - 150, 400, 300, 50, (0, 150, 0), (0, 255, 0))
 
     while current_state == SETTINGS:
         screen.blit(background_img, (0, 0))
@@ -704,6 +725,11 @@ def settings_screen():
         screen.blit(volume_text, (50, 150))
         volume = draw_slider(50, 180, volume, 0.0, 1.0)
         pygame.mixer.music.set_volume(volume)
+        bullet_sound.set_volume(volume)
+        explosion_sound.set_volume(volume)
+        powerup_sound.set_volume(volume)
+        game_over_sound.set_volume(volume)
+        button_click_sound.set_volume(volume)
         vibration_button.draw(screen)
         back_button.draw(screen)
 
@@ -725,7 +751,7 @@ def game_loop():
     global current_state, high_score, scroll, money, user_name, last_shot_time, achievements
     player_x = SCREEN_WIDTH // 2 - 40
     player_y = SCREEN_HEIGHT - 120
-    player_speed = 0.3 * (1.5 if current_spaceship == 0 else 1)
+    player_speed = 1.5 * (1.5 if current_spaceship == 0 else 1)
     player_health = 3
     player_boost = {"speed": False, "bullet": False, "speed_time": 0, "bullet_time": 0, "shield": current_spaceship == 4, 
                     "shield_time": 0, "double": False, "double_time": 0, "triple": False, "triple_time": 0, 
@@ -737,7 +763,7 @@ def game_loop():
 
     colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255)]
     enemy_types = ["fast", "tank", "shooter"]
-    enemies = [Enemy(random.randint(0, SCREEN_WIDTH - 60), -50 - i * 300, 5, random.choice(colors), random.choice(enemy_types)) for i in range(3)]
+    enemies = [Enemy(random.randint(0, SCREEN_WIDTH - 60), -50 - i * 300, random.randint(1, 100), random.choice(colors), random.choice(enemy_types)) for i in range(3)]
     bullets = []
     score = 0
     enemies_defeated = 0

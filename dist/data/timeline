@@ -1,0 +1,27 @@
+digraph Timeline {
+	M1 [label="Month 1: Research & Planning" fillcolor=lightblue shape=box style=filled]
+	W1 [label="Week 1-2: Literature Review"]
+	W2 [label="Week 3: Identify Components"]
+	W3 [label="Week 4: System Design & Circuit Diagram"]
+	M1 -> W1
+	W1 -> W2
+	W2 -> W3
+	M2 [label="Month 2: Prototype Development" fillcolor=lightgreen shape=box style=filled]
+	W4 [label="Week 1: Assemble Hardware"]
+	W5 [label="Week 2: Write & Test Basic Code"]
+	W6 [label="Week 3: Implement Alert System"]
+	W7 [label="Week 4: Debug & Refine"]
+	M2 -> W4
+	W4 -> W5
+	W5 -> W6
+	W6 -> W7
+	M3 [label="Month 3: Testing & Documentation" fillcolor=lightcoral shape=box style=filled]
+	W8 [label="Week 1-2: Prototype Testing"]
+	W9 [label="Week 3: Data Analysis & Improvements"]
+	W10 [label="Week 4: Finalize Documentation"]
+	M3 -> W8
+	W8 -> W9
+	W9 -> W10
+	W3 -> M2
+	W7 -> M3
+}
